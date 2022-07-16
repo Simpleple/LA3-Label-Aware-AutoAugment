@@ -1,0 +1,43 @@
+CODE for paper "LA3: Label-Aware AutoAugment"
+
+code adapted from https://github.com/kakaobrain/fast-autoaugment
+
+#################################################
+
+main code files:
+
+    LA3/search_stage_1.py:
+        perform stage 1 (Augmentation Evaluation) search given a pre-trained model, output a file containing the search history to train neural predictors
+
+    LA3/search_stage_2.py:
+        train neural predictors with saved search data, construct the final policy
+
+    LA3/train_label_aware.py
+        train target networks with searched label-aware policy
+
+    LA3/train_label_aware_batch.py
+        train target networks with searched label-aware policy and batch augment
+
+#################################################
+
+searched policy files:
+
+    policies/cifar10_policy.pkl
+    policies/cifar100_policy.pkl
+    policies/imgnet_policy.pkl
+
+#################################################
+
+Example usage for CIFAR-100 & WRN-40-2:
+
+    search stage 1:
+
+        python LA3/search_stage_1.py -c confs/wresnet40x2_cifar_search.yaml --dataset reduced_cifar100 --dataroot DATAROOT --pretrained_model CIFAR_100_MODEL_PATH
+
+    search stage 2:
+
+        python LA3/search_stage_2.py --data_file reduced_cifar100_wresnet40_2/aug_pg_data.pkl -c confs/wresnet40x2_cifar.yaml --alpha 2.5
+
+    train:
+
+        python LA3/train_class_op.py -c confs/wresnet40x2_cifar_train.yaml --dataset cifar100_class_op --dataroot DATAROOT --cls_policy POLICY_FILE
